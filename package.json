@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "console.table": "^0.10.0",
     "express": "^4.18.1",
+    "inquirer": "^8.2.4",
     "mysql2": "^2.3.3"
   },
   "scripts": {
@@ -9,7 +11,6 @@
   "name": "employee-tracker-cms",
   "version": "1.0.0",
   "main": "server.js",
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/emmazart/employee-tracker-cms.git"
