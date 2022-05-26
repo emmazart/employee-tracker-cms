@@ -22,7 +22,9 @@ class Store {
         if (table === 'employee') {
             return `INSERT INTO ${table} (first_name, last_name, role_id, manager_id) VALUES(?,?,?,?)`;
         } else if (table === 'department') {
-            return `INSERT INTO department (name) VALUES(?)`;
+            return `INSERT INTO ${table} (name) VALUES(?)`;
+        } else if (table === 'role') {
+            return `INSERT INTO ${table} (title, salary, department_id) VALUES(?,?,?)`;
         }
     }
 
@@ -32,6 +34,8 @@ class Store {
             return `UPDATE ${table} SET role_id = ? WHERE id = ?`;
         } else if (table === 'department') {
             return `UPDATE ${table} SET name = ? WHERE id = ?`;
+        } else if (table === 'role') {
+            return `UPDATE ${table} SET salary = ? WHERE id = ?`;
         }
     }
 

@@ -1,9 +1,6 @@
 const router = require('express').Router();
 const db = require('../../db/connection');
-const { updateOne } = require('../../db/store');
 const store = require('../../db/store') // import helper class
-const inputCheck = require('../../utils/inputCheck');
-
 
 // get all departments  /api/departments
 router.get('/', (req, res) => {
