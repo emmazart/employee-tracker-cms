@@ -10,8 +10,41 @@ const app = express();
 app.use(express.urlencoded({ extended: false })) // parse incoming string or array data
 app.use(express.json()); // parse incoming json data
 
+// get all departments
 app.get('/api/department', (req, res) => {
     const sql = `SELECT * FROM department`;
+
+    db.query(sql, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: rows
+        });
+    });
+});
+
+// get all roles
+app.get('/api/role', (req, res) => {
+    const sql = `SELECT * FROM role`;
+
+    db.query(sql, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: rows
+        });
+    });
+});
+
+// get all employees
+app.get('/api/employee', (req, res) => {
+    const sql = `SELECT * FROM employee`;
 
     db.query(sql, (err, rows) => {
         if (err) {
