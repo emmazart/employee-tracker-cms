@@ -1,12 +1,12 @@
 const router = require('express').Router();
-const req = require('express/lib/request');
 const db = require('../../db/connection');
+const store = require('../../db/store') // import helper class
 const inputCheck = require('../../utils/inputCheck');
 
 
 // get all departments  /api/departments
 router.get('/', (req, res) => {
-    const sql = `SELECT * FROM department`;
+    const sql = store.findAll('department')
 
     db.query(sql, (err, rows) => {
         if (err) {
@@ -22,7 +22,7 @@ router.get('/', (req, res) => {
 
 // get a single department   /api/departments/:id
 router.get('/:id', (req, res) => {
-    const sql = `SELECT * FROM department WHERE id = ?`;
+    const sql = store.findOne('department');
     const params = [req.params.id];
 
     db.query(sql, params, (err, row) => {
@@ -39,7 +39,7 @@ router.get('/:id', (req, res) => {
 
 // delete a department  /api/departments/:id
 router.delete('/:id', (req, res) => {
-    const sql = `DELETE FROM department WHERE id =?`;
+    const sql = store.deleteOne('department');
     const params = [req.params.id];
 
     db.query(sql, params, (err, result) => {

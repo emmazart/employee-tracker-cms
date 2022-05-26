@@ -2,6 +2,34 @@
 
 class Store {
 
+    // takes in a table name & returns sql query for SELECT *
+    findAll(table) {
+        return `SELECT * FROM ${table}`;
+    }
+
+    // takes in table name and returns sql query for SELECT
+    findOne(table) {
+        return `SELECT * FROM ${table} WHERE id = ?`;
+    }
+
+    // takes in table name and returns sql query for DELETE
+    deleteOne(table) {
+        return `DELETE FROM ${table} WHERE id = ?`;
+    }
+
+    // takes in table name, checks for kind of table, returns sql query
+    createOne(table) {
+        if (table === 'employee') {
+            return `INSERT INTO ${table} (first_name, last_name, role_id, manager_id) VALUES(?,?,?,?)`;
+        }
+    }
+
+    // takes in table name
+    updateRole(table) {
+        if (table === 'employee') {
+            return `UPDATE ${table} SET role_id = ? WHERE id = ?`;
+        }
+    }
 
 }
 
