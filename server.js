@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('./db/connection');
 const inputCheck = require('./utils/inputCheck');
+const routes = require('./routes');
 
 // instantiate the server
 const PORT = process.env.PORT || 3001;
@@ -10,59 +11,10 @@ const app = express();
 app.use(express.urlencoded({ extended: false })) // parse incoming string or array data
 app.use(express.json()); // parse incoming json data
 
-// get all departments
-app.get('/api/department', (req, res) => {
-    const sql = `SELECT * FROM department`;
-
-    db.query(sql, (err, rows) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        res.json({
-            message: 'success',
-            data: rows
-        });
-    });
-});
-
-// get all roles
-app.get('/api/role', (req, res) => {
-    const sql = `SELECT * FROM role`;
-
-    db.query(sql, (err, rows) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        res.json({
-            message: 'success',
-            data: rows
-        });
-    });
-});
-
-// get all employees
-app.get('/api/employee', (req, res) => {
-    const sql = `SELECT * FROM employee`;
-
-    db.query(sql, (err, rows) => {
-        if (err) {
-            res.status(500).json({ error: err.message });
-            return;
-        }
-        res.json({
-            message: 'success',
-            data: rows
-        });
-    });
-});
+// turn on routes
+app.use('/', routes);
 
 
-// Catchall 
-app.use((req, res) => {
-    res.sendStatus(404).end();
-});
 
 // start server after db connection
 db.connect(err => {
