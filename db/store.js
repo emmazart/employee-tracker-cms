@@ -21,13 +21,17 @@ class Store {
     createOne(table) {
         if (table === 'employee') {
             return `INSERT INTO ${table} (first_name, last_name, role_id, manager_id) VALUES(?,?,?,?)`;
+        } else if (table === 'department') {
+            return `INSERT INTO department (name) VALUES(?)`;
         }
     }
 
-    // takes in table name
-    updateRole(table) {
+    // takes in table name & returns update sql
+    updateOne(table) {
         if (table === 'employee') {
             return `UPDATE ${table} SET role_id = ? WHERE id = ?`;
+        } else if (table === 'department') {
+            return `UPDATE ${table} SET name = ? WHERE id = ?`;
         }
     }
 

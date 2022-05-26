@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const db = require('../../db/connection');
+const { updateOne } = require('../../db/store');
 const store = require('../../db/store') // import helper class
 const inputCheck = require('../../utils/inputCheck');
 
@@ -61,7 +62,7 @@ router.delete('/:id', (req, res) => {
 
 // update a department name  /api/departments/:id
 router.put('/:id', (req, res) => {
-    const sql = `UPDATE department SET name = ? WHERE id = ?`;
+    const sql = store.updateOne('department');
     const params = [req.body.name, req.params.id];
 
     db.query(sql, params, (err, result) => {
@@ -87,7 +88,7 @@ router.post('/', ({ body }, res) => {
     // if (errors) {
     //     res.status(400).json({ error: errors });
     // }
-    const sql = `INSERT INTO department (name) VALUES(?)`;
+    const sql = store.createOne('department');
     const params = [body.name];
 
     db.query(sql, params, (err, result) => {

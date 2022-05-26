@@ -77,7 +77,7 @@ router.post('/', ({ body}, res) => {
 
 // update an employee   /api/employees/:id
 router.put('/:id', (req, res) => {
-    const sql = store.updateRole('employee');
+    const sql = store.updateOne('employee');
     const params = [req.body.role_id, req.params.id];
 
     db.query(sql, params, (err, result) => {
