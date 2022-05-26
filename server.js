@@ -1,6 +1,5 @@
 const express = require('express');
 const db = require('./db/connection');
-const inputCheck = require('./utils/inputCheck');
 const routes = require('./routes');
 
 // instantiate the server
@@ -13,7 +12,6 @@ app.use(express.json()); // parse incoming json data
 
 // turn on routes
 app.use('/', routes);
-
 
 
 // start server after db connection
