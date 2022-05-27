@@ -13,7 +13,6 @@ app.use(express.json()); // parse incoming json data
 // turn on routes
 app.use('/', routes);
 
-
 // start server after db connection
 db.connect(err => {
     if (err) throw err;

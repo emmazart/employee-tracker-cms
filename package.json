@@ -7,7 +7,8 @@
     "mysql2": "^2.3.3"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node index.js",
+    "run": "node server.js"
   },
   "name": "employee-tracker-cms",
   "version": "1.0.0",

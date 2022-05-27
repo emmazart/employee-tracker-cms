@@ -2,8 +2,10 @@ const router = require('express').Router();
 const db = require('../../db/connection');
 const store = require('../../db/store') // import helper class
 
+class Department {
+
 // get all departments  /api/departments
-router.get('/', (req, res) => {
+getAll() {router.get('/', (req, res) => {
     const sql = store.findAll('department')
 
     db.query(sql, (err, rows) => {
@@ -17,9 +19,10 @@ router.get('/', (req, res) => {
         });
     });
 });
+}
 
 // get a single department   /api/departments/:id
-router.get('/:id', (req, res) => {
+getOne() {router.get('/:id', (req, res) => {
     const sql = store.findOne('department');
     const params = [req.params.id];
 
@@ -34,9 +37,10 @@ router.get('/:id', (req, res) => {
         });
     });
 });
+}
 
 // delete a department  /api/departments/:id
-router.delete('/:id', (req, res) => {
+deleteOne() {router.delete('/:id', (req, res) => {
     const sql = store.deleteOne('department');
     const params = [req.params.id];
 
@@ -56,9 +60,10 @@ router.delete('/:id', (req, res) => {
         }
     });
 });
+}
 
 // update a department name  /api/departments/:id
-router.put('/:id', (req, res) => {
+put() {router.put('/:id', (req, res) => {
     const sql = store.updateOne('department');
     const params = [req.body.name, req.params.id];
 
@@ -78,9 +83,10 @@ router.put('/:id', (req, res) => {
         }
     });
 });
+}
 
 // create a new department /api/departments 
-router.post('/', ({ body }, res) => {
+post() {router.post('/', ({ body }, res) => {
     // const errors = inputCheck(body, 'name');
     // if (errors) {
     //     res.status(400).json({ error: errors });
@@ -99,5 +105,7 @@ router.post('/', ({ body }, res) => {
         });
     });
 });
+}
+}
 
-module.exports = router;
+module.exports = new Department();

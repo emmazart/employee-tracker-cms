@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const req = require('express/lib/request');
+const req = require('express/lib/request'); // why does this automatically pop up?
 const db = require('../../db/connection');
 const store = require('../../db/store') // import helper class
 
