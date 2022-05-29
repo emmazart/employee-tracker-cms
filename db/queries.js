@@ -20,16 +20,23 @@ class Queries {
         }
     }
 
-    // takes in table name and returns sql query for SELECT
-    // pass in id? choices index + 1?
-    findOne(table) {
-        return `SELECT * FROM ${table} WHERE id = ?`;
-        // 
+    // takes in table name and id to return single item
+    findOne(table, id) {
+        return db.promise().query(`SELECT * FROM ${table} WHERE id = ${id}`);
+    }
+
+    findByDepartment(id) {
+        return db.promise().query(
+            `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, manager.first_name AS manager 
+                FROM employee 
+                LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id 
+                LEFT JOIN employee manager ON manager.id = employee.manager_id
+                WHERE role.department_id = ${id}`);
     }
 
     // takes in table name and returns sql query for DELETE
-    deleteOne(table) {
-        return `DELETE FROM ${table} WHERE id = ?`;
+    deleteOne(table, param1) {
+        return db.promise().query(`DELETE FROM ${table} WHERE id = ${param1}`);
     }
 
     // takes in table name, checks for kind of table, returns sql query
@@ -46,14 +53,20 @@ class Queries {
     }
 
     // takes in table name & returns update sql
+    // handles updates for employee role, department name, role salary
     updateOne(table, param1, param2) {
         if (table === 'employee') {
             return db.promise().query(`UPDATE ${table} SET role_id = ${param2} WHERE id = ${param1}`);
         } else if (table === 'department') {
-            return `UPDATE ${table} SET name = ? WHERE id = ?`;
+            return db.promise().query(`UPDATE ${table} SET name = ${param2} WHERE id = ${param1}`);
         } else if (table === 'role') {
-            return `UPDATE ${table} SET salary = ? WHERE id = ?`;
+            return db.promise().query(`UPDATE ${table} SET salary = ${param2} WHERE id = ${param1}`);
         }
+    }
+
+    // handles updates for employee manager
+    updateManager(table, employee, newManager) {
+        return db.promise().query(`UPDATE ${table} SET manager_id = ${newManager} WHERE id = ${employee}`);
     }
 
 }
