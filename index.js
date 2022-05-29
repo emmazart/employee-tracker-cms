@@ -1,16 +1,19 @@
-const { prompt } = require('inquirer');
-const cTable = require('console.table');
-const queries = require('./db/queries');
-const { newDeptQuestions, newRoleQuestions} = require('./utils/questions');
+const { prompt } = require('inquirer'); // deconstruct prompt from inquirer
+const cTable = require('console.table'); // console.table formatting
+const queries = require('./db/queries'); // reusable sql queries stored as a class in queries.js
+const { newDeptQuestions, newRoleQuestions} = require('./utils/questions'); // deconstructed input from questions.js
 const db = require('./db/connection');
 
+// ---------- FUNCTION FOR EXITING APPLICATION ---------- //
 const end = () => {
     console.log('Thank you, exiting application.');
     process.exit();
 };
 
+// ---------- MAIN MENU FUNCTION ---------- //
 const menu = () => {
 
+    // prompts all available action choices & uses switch statment to call functions based on user choice
     prompt([
         {
             name: 'typeofAction',
@@ -33,13 +36,13 @@ const menu = () => {
     ]).then(choice => {
         switch(choice.typeofAction) {
             case 'VIEW all departments':
-                findAllFromTable('department'); // call function to handle
+                findAllFromTable('department');
                 break;
             case 'VIEW all roles':
-                findAllFromTable('role'); // call function to handle
+                findAllFromTable('role'); 
                 break;
             case 'VIEW all employees':
-                findAllFromTable('employee'); // call function to handle
+                findAllFromTable('employee');
                 break;
             case 'VIEW employees by department':
                 findByDepartment();
@@ -76,7 +79,8 @@ const menu = () => {
     });
 };
 
-// ---------- FUNCTION FOR VIEWING TABLE CHOICES ---------- //
+// FUNCTIONS FOR VIEWING DATA
+// ---------- DECLARE FUNCTION FOR VIEWING TABLE CHOICES, works for any table name passed as param ---------- //
 function findAllFromTable(param) {
     queries.findAll(param) // calls methods in queries.js
     .then(([rows]) => {
@@ -84,6 +88,43 @@ function findAllFromTable(param) {
     })
     .then(() => menu());
 };
+
+function findByDepartment() {
+    // get list of all current departments & grab id for that department
+    db.query(`SELECT * FROM department;`, (err, rows) => {
+        const departments = rows.map((row) => {
+            return { value: row.id, name: row.name }
+        })
+        prompt([
+            {
+                name: 'deptChoices',
+                message: "Select a department:",
+                type: 'list',
+                choices: departments,
+            }
+        ]).then((answer) => {
+            // STORE DEPARTMENT ANSWER
+            let department = answer.deptChoices
+
+            queries.findByDepartment(department)
+            .then(([rows]) => {
+                console.table(rows)
+            })
+            .then(() => menu());
+        });
+    });
+};
+
+// FUNCTIONS FOR ADDING DATA TO DB
+
+// ---------- FUNCTION TAKES IN NECESSARY PARAMS AND SENDS TO METHODS IN QUERIES.JS ---------- //
+function addToTable(table, param1, param2, param3, param4) {
+    queries.createOne(table, param1, param2, param3, param4) // calls methods in queries.js
+    .then((result) => {
+        console.log('Affected Rows: ' + result[0].affectedRows)
+        menu();
+    });
+}
 
 // ---------- DECLARE FUNCTION FOR ADDING A NEW EMPLOYEE ---------- //
 function addEmployee() {
@@ -173,6 +214,9 @@ function addRole() {
         });
     });
 };
+
+
+// FUNCTIONS FOR UPDATING CURRENT DATA IN DB
 
 function updateEmployee() {
     prompt([
@@ -300,6 +344,7 @@ function updateManager() {
     
 }
 
+// FUNCTIONS FOR DELETING DATA FROM DB
 // ---------- FUNCTION DELETE FROM DEPARTMENT TABLE BY PRIMARY KEY ID ---------- //
 function deleteById(table) {
     // SEND DB QUERY FOR TABLE OPTIONS
@@ -376,41 +421,8 @@ function deleteEmployee() {
     })
 }
 
-function findByDepartment() {
-    // get list of all current departments & grab id for that department
-    db.query(`SELECT * FROM department;`, (err, rows) => {
-        const departments = rows.map((row) => {
-            return { value: row.id, name: row.name }
-        })
-        prompt([
-            {
-                name: 'deptChoices',
-                message: "Select a department:",
-                type: 'list',
-                choices: departments,
-            }
-        ]).then((answer) => {
-            // STORE DEPARTMENT ANSWER
-            let department = answer.deptChoices
 
-            queries.findByDepartment(department)
-            .then(([rows]) => {
-                console.table(rows)
-            })
-            .then(() => menu());
-        })
-    })
-}
-
-// ---------- FUNCTION TAKES IN NECESSARY PARAMS AND SENDS TO METHODS IN QUERIES.JS ---------- //
-function addToTable(table, param1, param2, param3, param4) {
-    queries.createOne(table, param1, param2, param3, param4) // calls methods in queries.js
-    .then((result) => {
-        console.log('Affected Rows: ' + result[0].affectedRows)
-        menu();
-    });
-}
-
+// ---------- DELCARE INIT FUNCTION TO CALL MAIN MENU ---------- //
 function init(){
     menu(); 
 }
