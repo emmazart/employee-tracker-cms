@@ -1,7 +1,7 @@
 const { prompt } = require('inquirer');
 const cTable = require('console.table');
 const queries = require('./db/queries');
-const { newDeptQuestions, newEmployeeQuestions} = require('./utils/questions');
+const { newDeptQuestions, newRoleQuestions} = require('./utils/questions');
 const db = require('./db/connection');
 
 const end = () => {
@@ -40,18 +40,10 @@ const menu = () => {
                 })            
                 break;
             case 'Add a role':
-                // call function to handle
+                addRole();
                 break;
             case 'Add an employee':
                 addEmployee();
-                // ----- WORKS FOR FIRST & LAST NAME but not role/manager ----- //
-                // prompt(newEmployeeQuestions)
-                // .then((answers) => {
-                //     let firstName = JSON.stringify(answers.firstName);
-                //     let lastName = JSON.stringify(answers.lastName);
-                //     console.log(firstName + lastName);
-                //     addToTable('employee', firstName, lastName, role, manager);
-                // })
                 break;
             case 'Update the role of an existing employee':
                 updateRole(); // call function to handle
@@ -63,25 +55,18 @@ const menu = () => {
     });
 };
 
-function test() {
-    console.log('PASSED');
-    prompt(questions)
-    .then((answer) => {
-        let newDept = JSON.stringify(answer.departmentName);
-        console.log(newDept)
-        addToTable('department', newDept);
-    })
-};
-
+// ---------- FUNCTION FOR VIEWING TABLE CHOICES ---------- //
 function findAllFromTable(param) {
-    queries.findAll(param)
+    queries.findAll(param) // calls methods in queries.js
     .then(([rows]) => {
         console.table(rows);
     })
     .then(() => menu());
 };
 
+// ---------- DECLARE FUNCTION FOR ADDING A NEW EMPLOYEE ---------- //
 function addEmployee() {
+    // PROMPT FOR NEW EMPLOYEE FIRST & LAST NAME
     prompt([
         {
             name: 'firstName',
@@ -94,13 +79,14 @@ function addEmployee() {
             type: 'input'
         }
     ]).then((answers) => {
+        // STORE FIRST & LAST NAME ANSWERS AS STRINGS
         let firstName = JSON.stringify(answers.firstName)
         let lastName = JSON.stringify(answers.lastName)
 
-        db.query("SELECT id, title FROM role;", (err, rows) => {
-            console.log(rows)
+        // SEND DB QUERY FOR ROLE OPTIONS
+        db.query("SELECT role.id, role.title, role.salary, department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id;", (err, rows) => {
             const roles = rows.map((row) => {
-                return { value: row.id, name: row.title }
+                return { value: row.id, name: row.title + ", " + row.department + " (Salary: " + row.salary + ")" }
             })
             prompt([
                 {
@@ -110,11 +96,11 @@ function addEmployee() {
                     choices: roles,
                 }
             ]).then((answer) => {
+                // STORE ROLE ANSWER
                 let role = answer.roleChoices
-                console.log(role)
     
+                // SEND DB QUERY FOR MANAGER OPTIONS
                 db.query("SELECT id, first_name, last_name FROM employee;", (err, rows) => {
-                    console.log(rows)
                     const managers = rows.map((row) => {
                         return { value: row.id, name: row.first_name + " " + row.last_name }
                     })
@@ -126,9 +112,11 @@ function addEmployee() {
                             choices: managers,
                         }
                     ]).then((answer) => {
+                        // STORE MANAGER ANSWER
                         let manager = answer.managerChoices
                         console.log(manager)
 
+                        // CALL FUNCTION AND PASS IN ALL NECESSARY PARAMS
                         addToTable('employee', firstName, lastName, role, manager);
                     })          
                 }) 
@@ -136,6 +124,10 @@ function addEmployee() {
         })    
     })
 };
+
+function addRole() {
+    
+}
 
 function getAllChoices(param) {
     queries.findAll(param)
@@ -165,9 +157,13 @@ function updateRole() {
     })
 }
 
+// ---------- FUNCTION TAKES IN NECESSARY PARAMS AND SENDS TO METHODS IN QUERIES.JS ---------- //
 function addToTable(table, param1, param2, param3, param4) {
-    queries.createOne(table, param1, param2, param3, param4)
-    .then((result) => console.log('Affected Rows:' + result[0].affectedRows));
+    queries.createOne(table, param1, param2, param3, param4) // calls methods in queries.js
+    .then((result) => {
+        console.log('Affected Rows: ' + result[0].affectedRows)
+        menu();
+    });
 }
 
 menu(); 

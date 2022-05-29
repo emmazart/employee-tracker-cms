@@ -29,26 +29,18 @@ const questions = {
     
         }
     ],
-    newEmployeeQuestions: [
+    newRoleQuestions: [
         {
-            name: 'firstName',
-            message: "Enter employee's first name:",
+            name: 'title',
+            message: "Enter a title:",
             type: 'input'
         },
         {
-            name: 'lastName',
-            message: "Enter employee's last name:",
-            type: 'input'
-        },
-        // {
-        //     name: 'role',
-        //     message: "Select a role:",
-        //     type: 'rawlist',
-        //     choices: findAllRoles()
-
-        // }
+            name: 'salary',
+            message: "Enter the salary for this role (numbers only):",
+            type: 'number'
+        }
     ]
-
 }
 
 module.exports = questions;
