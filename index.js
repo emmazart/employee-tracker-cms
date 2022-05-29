@@ -126,7 +126,33 @@ function addEmployee() {
 };
 
 function addRole() {
-    
+    // PROMPT FOR NEW EMPLOYEE FIRST & LAST NAME
+    prompt(newRoleQuestions).then((answers) => {
+        // STORE TITLE & SALARY ANSWERS
+        let title = JSON.stringify(answers.title)
+        let salary = answers.salary
+
+        // SEND DB QUERY FOR DEPARTMENT OPTIONS
+        db.query("SELECT * FROM department;", (err, rows) => {
+            const departments = rows.map((row) => {
+                return { value: row.id, name: row.name }
+            })
+            prompt([
+                {
+                    name: 'deptChoices',
+                    message: "Select a department:",
+                    type: 'list',
+                    choices: departments,
+                }
+            ]).then((answer) => {
+                // STORE ROLE ANSWER
+                let department = answer.deptChoices
+
+                addToTable('role', title, salary, department);
+
+            })
+        })
+    })
 }
 
 function getAllChoices(param) {

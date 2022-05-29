@@ -40,7 +40,8 @@ class Queries {
             return db.promise().query(
                 `INSERT INTO ${table} (name) VALUES (${param1})`);
         } else if (table === 'role') {
-            return `INSERT INTO ${table} (title, salary, department_id) VALUES(?,?,?)`;
+            return db.promise().query( 
+                `INSERT INTO ${table} (title, salary, department_id) VALUES(${param1},${param2},${param3})`);
         }
     }
 
