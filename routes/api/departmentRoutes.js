@@ -100,4 +100,5 @@ router.post('/', ({ body }, res) => {
     });
 });
 
+module.exports = router;
 
