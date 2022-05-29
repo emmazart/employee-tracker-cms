@@ -126,7 +126,7 @@ function addEmployee() {
 };
 
 function addRole() {
-    // PROMPT FOR NEW EMPLOYEE FIRST & LAST NAME
+    // PROMPT FOR NEW ROLE TITLE & SALARY
     prompt(newRoleQuestions).then((answers) => {
         // STORE TITLE & SALARY ANSWERS
         let title = JSON.stringify(answers.title)
@@ -150,38 +150,59 @@ function addRole() {
 
                 addToTable('role', title, salary, department);
 
-            })
-        })
-    })
-}
+            });
+        });
+    });
+};
 
-function getAllChoices(param) {
-    queries.findAll(param)
-    .then(([rows]) => {
-        console.log(rows);
-    })
-    // .then(() => menu());
-}
-
+// WHEN I choose to update an employee role
+// THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 function updateRole() {
-    queries.findAll('role')
-    .then(([rows]) => {
-        console.log(rows.title)
+    // SEND DB QUERY FOR EMPLOYEE OPTIONS
+    db.query("SELECT * FROM employee;", (err, rows) => {
+        const employees = rows.map((row) => {
+            return { value: row.id, name: row.first_name + " " + row.last_name}
+        })
         prompt([
             {
-                name: 'test',
-                message: 'test',
-                type: 'input'
-            },
-            // {
-            //     name: 'newRole',
-            //     message: 'Select a new role:',
-            //     type: 'rawlist', 
-            //     choices: rows
-            // }
-        ])
-    })
-}
+                name: 'employeeChoices',
+                message: 'Select an employee to update:',
+                type: 'list',
+                choices: employees,   
+            }
+        ]).then((answer) => {
+            // STORE EMPLOYEE ANSWER
+            let employee = answer.employeeChoices
+
+            // SEND DB QUERY FOR ROLE OPTIONS
+            db.query("SELECT role.id, role.title, role.salary, department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id;", (err, rows) => {
+                const roles = rows.map((row) => {
+                    return { value: row.id, name: row.title + ", " + row.department + " (Salary: " + row.salary + ")" }
+                })
+
+                prompt([
+                    {
+                        name: 'roleChoices',
+                        message: "Select a new role:",
+                        type: 'list',
+                        choices: roles,
+                    }
+                ]).then((answer) => {
+                    // STORE ROLE ANSWER
+                    let role = answer.roleChoices
+
+                    // SEND DB QUERY FOR BOTH PARAMS
+                    queries.updateOne('employee', employee, role)
+                    .then((result) => {
+                        console.log('Affected Rows: ' + result[0].affectedRows)
+                        menu();
+                    });                
+        
+                });
+            });
+        });
+    });
+};
 
 // ---------- FUNCTION TAKES IN NECESSARY PARAMS AND SENDS TO METHODS IN QUERIES.JS ---------- //
 function addToTable(table, param1, param2, param3, param4) {

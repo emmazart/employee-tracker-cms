@@ -46,9 +46,9 @@ class Queries {
     }
 
     // takes in table name & returns update sql
-    updateOne(table) {
+    updateOne(table, param1, param2) {
         if (table === 'employee') {
-            return `UPDATE ${table} SET role_id = ? WHERE id = ?`;
+            return db.promise().query(`UPDATE ${table} SET role_id = ${param2} WHERE id = ${param1}`);
         } else if (table === 'department') {
             return `UPDATE ${table} SET name = ? WHERE id = ?`;
         } else if (table === 'role') {
